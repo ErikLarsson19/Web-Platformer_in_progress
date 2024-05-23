@@ -1,6 +1,6 @@
 export const GRAVITY = 0.5;
 export const JUMP_STRENGTH = -20;
-export const MOVE_SPEED = 5;
+export const MOVE_SPEED = 8;
 export const PLATFORM_GAP = 100;
 export const INITIAL_PLATFORM_COUNT = 10;
 export const GAME_HEIGHT = 800;
