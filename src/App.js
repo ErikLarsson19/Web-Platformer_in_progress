@@ -5,7 +5,6 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <h1>Simple Platformer</h1>
       <Game />
     </div>
   );

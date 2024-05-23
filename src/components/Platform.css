@@ -1,0 +1,11 @@
+.platform {
+    position: absolute;
+    width: 100px;
+    height: 20px;
+  }
+  
+  .platform img {
+    width: 100%;
+    height: 100%;
+  }
+  

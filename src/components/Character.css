@@ -1,0 +1,9 @@
+.character {
+    position: absolute;
+  }
+  
+  .character-image {
+    width: 50px; /* Adjusted width */
+    height: 50px; /* Adjusted height */
+  }
+  

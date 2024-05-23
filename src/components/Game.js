@@ -1,28 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import Character from './Character';
+import Platform from './Platform';
 import './Game.css';
+import { GRAVITY, JUMP_STRENGTH, MOVE_SPEED, PLATFORM_GAP, GAME_HEIGHT, CHARACTER_START_X, CHARACTER_START_Y } from '../utils/constants';
+import { generateInitialPlatforms, filterVisiblePlatforms, isCharacterOnPlatform } from '../utils/gameLogic';
 
-const Game = () => {
-  const [player, setPlayer] = useState({ x: 50, y: 50, width: 20, height: 20, velocityY: 0 });
-  const [isJumping, setIsJumping] = useState(false);
-  const platforms = [{ x: 0, y: 300, width: 400, height: 20 }];
+function Game() {
+  const [character, setCharacter] = useState({ x: CHARACTER_START_X, y: CHARACTER_START_Y, vy: 0, vx: 0 });
+  const [cameraY, setCameraY] = useState(0);
+  const [platforms, setPlatforms] = useState(generateInitialPlatforms);
 
-  const gameRef = useRef(null);
+  const resetGame = () => {
+    setCharacter({ x: CHARACTER_START_X, y: CHARACTER_START_Y, vy: 0, vx: 0 });
+    setCameraY(0);
+    setPlatforms(generateInitialPlatforms);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (e.key === 'ArrowLeft') {
+        setCharacter((prev) => ({ ...prev, vx: -MOVE_SPEED }));
+      }
       if (e.key === 'ArrowRight') {
-        setPlayer((prev) => ({ ...prev, x: prev.x + 5 }));
-      } else if (e.key === 'ArrowLeft') {
-        setPlayer((prev) => ({ ...prev, x: prev.x - 5 }));
-      } else if (e.key === 'ArrowUp' && !isJumping) {
-        setPlayer((prev) => ({ ...prev, velocityY: -10 }));
-        setIsJumping(true);
+        setCharacter((prev) => ({ ...prev, vx: MOVE_SPEED }));
       }
     };
 
     const handleKeyUp = (e) => {
-      if (e.key === 'ArrowUp') {
-        setIsJumping(false);
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        setCharacter((prev) => ({ ...prev, vx: 0 }));
       }
     };
 
@@ -33,46 +39,64 @@ const Game = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isJumping]);
+  }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPlayer((prev) => {
-        let newY = prev.y + prev.velocityY;
-        let newVelocityY = prev.velocityY + 1;
+    const gameLoop = setInterval(() => {
+      setCharacter((prev) => {
+        let newY = prev.y + prev.vy;
+        let newX = prev.x + prev.vx;
+        let newVy = prev.vy + GRAVITY;
 
-        platforms.forEach((platform) => {
-          if (
-            prev.x < platform.x + platform.width &&
-            prev.x + prev.width > platform.x &&
-            newY < platform.y + platform.height &&
-            newY + prev.height > platform.y &&
-            newVelocityY > 0
-          ) {
-            newY = platform.y - prev.height;
-            newVelocityY = 0;
+        const landedPlatform = platforms.find(p => isCharacterOnPlatform({ x: newX, y: newY }, p));
+
+        if (landedPlatform && newVy > 0) {
+          newVy = JUMP_STRENGTH;
+          if (landedPlatform.type === 'breakable') {
+            setPlatforms(prevPlatforms => prevPlatforms.filter(p => p !== landedPlatform));
           }
-        });
+        }
 
-        return { ...prev, y: newY, velocityY: newVelocityY };
+        // Prevent character from moving out of bounds
+        if (newX < 0) newX = 0;
+        if (newX > 575) newX = 575;
+
+        return { ...prev, y: newY, x: newX, vy: newVy };
       });
-    }, 20);
 
-    return () => clearInterval(interval);
-  }, [platforms]);
+      // Update the camera position to follow the character
+      setCameraY(character.y - 300);
+
+      // Add new platforms
+      setPlatforms((prev) => {
+        const highestPlatform = Math.min(...prev.map(p => p.y));
+        if (highestPlatform > cameraY - PLATFORM_GAP) {
+          const newPlatform = { x: Math.random() * 550, y: highestPlatform - PLATFORM_GAP, type: Math.random() > 0.8 ? 'breakable' : 'solid' };
+          return [...prev, newPlatform];
+        }
+        return filterVisiblePlatforms(prev, cameraY);
+      });
+
+      // Restart game if character falls below a certain point
+      if (character.y > CHARACTER_START_Y + GAME_HEIGHT) {
+        resetGame();
+      }
+
+    }, 16);
+
+    return () => clearInterval(gameLoop);
+  }, [cameraY, platforms, character.y]);
 
   return (
-    <div className="game" ref={gameRef}>
-      <div className="player" style={{ left: player.x, top: player.y }}></div>
-      {platforms.map((platform, index) => (
-        <div
-          key={index}
-          className="platform"
-          style={{ left: platform.x, top: platform.y, width: platform.width, height: platform.height }}
-        ></div>
-      ))}
+    <div className="game-container">
+      <div className="game-world" style={{ transform: `translateY(${-cameraY}px)` }}>
+        <Character x={character.x} y={character.y} />
+        {platforms.map((platform, index) => (
+          <Platform key={index} x={platform.x} y={platform.y} type={platform.type} />
+        ))}
+      </div>
     </div>
   );
-};
+}
 
 export default Game;
