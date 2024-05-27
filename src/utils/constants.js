@@ -1,9 +1,9 @@
 export const GRAVITY = 0.5;
-export const JUMP_STRENGTH = -20;
+export const JUMP_STRENGTH = -30;
 export const MOVE_SPEED = 5;
 export const INITIAL_PLATFORM_GAP = 100;
-export const GAME_HEIGHT = 800;
-export const GAME_WIDTH = 600;
+export const GAME_HEIGHT = 850;
+export const GAME_WIDTH = 800;
 export const CHARACTER_START_X = 275;
 export const CHARACTER_START_Y = 600; // Adjusted to be higher than the initial platforms
 export const PLATFORM_WIDTH = 100; // Width of the platform image

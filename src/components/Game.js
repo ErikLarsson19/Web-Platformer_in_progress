@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Character from './Character';
 import Platform from './Platform';
 import './Game.css';
-import { GRAVITY, JUMP_STRENGTH, MOVE_SPEED, INITIAL_PLATFORM_GAP, CHARACTER_START_X, CHARACTER_START_Y, FALL_LIMIT } from '../utils/constants';
+import { GRAVITY, JUMP_STRENGTH, MOVE_SPEED, INITIAL_PLATFORM_GAP, CHARACTER_START_X, CHARACTER_START_Y, FALL_LIMIT, GAME_HEIGHT, GAME_WIDTH } from '../utils/constants';
 import { generateInitialPlatforms, filterVisiblePlatforms, isCharacterOnPlatform } from '../utils/gameLogic';
 
 function Game() {
@@ -12,6 +12,12 @@ function Game() {
   const [score, setScore] = useState(0);
   const [platformGap, setPlatformGap] = useState(INITIAL_PLATFORM_GAP);
   const [gameOver, setGameOver] = useState(false);
+
+  useEffect(() => {
+    // Update CSS variables with the game dimensions
+    document.documentElement.style.setProperty('--game-width', `${GAME_WIDTH}px`);
+    document.documentElement.style.setProperty('--game-height', `${GAME_HEIGHT}px`);
+  }, []);
 
   const resetGame = () => {
     setCharacter({ x: CHARACTER_START_X, y: CHARACTER_START_Y, vy: 0, vx: 0 });
