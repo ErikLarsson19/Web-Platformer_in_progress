@@ -1,4 +1,4 @@
-export const GRAVITY = 0.5;
+export const GRAVITY = 1;
 export const JUMP_STRENGTH = -30;
 export const MOVE_SPEED = 5;
 export const INITIAL_PLATFORM_GAP = 100;

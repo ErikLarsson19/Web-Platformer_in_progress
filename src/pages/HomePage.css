@@ -152,3 +152,52 @@ body, html {
     height: 50px;
   }
   
+  /* Running Robot Animation */
+.running-robot {
+  position: absolute;
+  bottom: 70px;
+  left: 0;
+  width: 70px; /* Adjust width as needed */
+  height: 70px; /* Adjust height as needed */
+  animation: runRobot 10s linear infinite;
+}
+
+@keyframes runRobot {
+  0% {
+    transform: translateX(-70px);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}
+
+
+.moving-dragon {
+  position: absolute;
+  width: 300px; 
+  height: 300px; 
+  animation: moveDragon 20s ease infinite;
+}
+
+@keyframes moveDragon {
+  0% {
+    top: 10%;
+    left: -70px;
+  }
+  25% {
+    top: 10%;
+    left: 25%;
+  }
+  50% {
+    top: 10%;
+    left: 50%;
+  }
+  75% {
+    top: 10%;
+    left: 75%;
+  }
+  100% {
+    top: 10%;
+    left: 100vw;
+  }
+}

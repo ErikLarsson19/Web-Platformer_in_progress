@@ -53,7 +53,11 @@ function HomePage() {
           <img src="/assets/Mans.png" alt="Taskbar Icon 3" onClick={playButtonSound} />
           <img src="/assets/Flower.png" alt="Taskbar Icon 4" onClick={playButtonSound} />
         </div>
+        <img src="/assets/Bot_run.gif" alt="Running Robot" className="running-robot" />
       </div>
+
+
+    <img src="/assets/Dragon.gif" alt="Moving Dragon" className="moving-dragon" />  
     </div>
   );
 }
